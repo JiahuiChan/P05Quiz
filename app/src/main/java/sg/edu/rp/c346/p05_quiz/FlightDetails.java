@@ -18,14 +18,22 @@ public class FlightDetails extends AppCompatActivity {
         tv2 = findViewById(R.id.textView2);
 
 
+
         Intent intentReceived = getIntent();
-        String tickets = intentReceived.getStringExtra("Tickets");
-        String pax = intentReceived.getStringExtra("pax");
+        int tickets = intentReceived.getIntExtra("type" , 0);
+        int pax = intentReceived.getIntExtra("pax" , 0);
+        double cost = 100 * pax;
 
-        tv1.setText("You have selected" + tickets);
+        if (tickets == 1){
+            tv1.setText("You have selected One-Way Trip");
+            tv2.setText(Double.toString(cost));
 
-        tv2.setText("Your air ticket costs" + pax);
-
+        }
+        else{
+            tv1.setText("You have selected Round Trip");
+            cost = cost * 2;
+            tv2.setText(Double.toString(cost));
+        }
 
     }
 }

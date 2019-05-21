@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -14,15 +15,6 @@ public class MainActivity extends AppCompatActivity {
     Button btnMinus , btnPlus , btnSubmit;
     TextView tvPax;
 
-    private double calOneWay(int pax){
-        double amt = pax * 100;
-        return amt;
-    }
-
-    private double calRoundTrip(int pax) {
-        double amt = pax * 100 * 2;
-        return amt;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,44 +23,61 @@ public class MainActivity extends AppCompatActivity {
 
         cbOneWay = findViewById(R.id.cbOneWay);
         cbRound = findViewById(R.id.cbRound);
+        btnMinus = findViewById(R.id.btnMin);
+        btnPlus = findViewById(R.id.btnPlus);
         tvPax = findViewById(R.id.tvPax);
         btnSubmit = findViewById(R.id.btnSubmit);
 
-        btnSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(cbOneWay.isChecked()){
-                    double amt = calOneWay(tvPax);
-                    Intent intent = new Intent(MainActivity.this , FlightDetails.class);
-                    intent.putExtra("Tickets","One Way Trip");
-                    startActivity(intent);
-
-                }else if(cbRound.isChecked()){
-                    Intent intent = new Intent(MainActivity.this , FlightDetails.class);
-                    intent.putExtra("Tickets","Round Trip");
-                    startActivity(intent);
-                }
-            }
-        });
 
         btnMinus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int a = 0;
-                Intent intent = new Intent(MainActivity.this , FlightDetails.class);
-                intent.putExtra("pax",a-1);
-                startActivity(intent);
+                int currPax = Integer.parseInt(tvPax.getText().toString());
+                if(currPax == 1){
+                    Toast.makeText(MainActivity.this,"Number of Pax cannot be below 1",Toast.LENGTH_LONG).show();
+                }
+                else{
+                    currPax -= 1;
+                    tvPax.setText(currPax + ""); // + "" to change to String because tvPax is a String
+                }
             }
+
         });
 
         btnPlus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int a = 0;
-                Intent intent = new Intent(MainActivity.this , FlightDetails.class);
-                intent.putExtra("pax",a+1);
-                startActivity(intent);
+                int currPax = Integer.parseInt(tvPax.getText().toString());
+                currPax += 1;
+                tvPax.setText(currPax + ""); // + "" to change to String because tvPax is a String
             }
+
+
+        });
+
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(cbOneWay.isChecked() && cbRound.isChecked()){
+                    Toast.makeText(MainActivity.this,"Please select only one ticket type",Toast.LENGTH_LONG).show();
+                }
+                else if (!cbOneWay.isChecked() && !cbRound.isChecked()){
+                    Toast.makeText(MainActivity.this,"Please select a ticket type",Toast.LENGTH_LONG).show();
+                }
+                else{
+                    Intent intent = new Intent(MainActivity.this,FlightDetails.class);
+                    if(cbOneWay.isChecked()){
+                        intent.putExtra("type",1);
+                    }
+                    else{
+                        intent.putExtra("type",2);
+                    }
+
+                    intent.putExtra("pax",Integer.parseInt(tvPax.getText().toString()));
+                    startActivity(intent);
+                }
+            }
+
         });
     }
 }
